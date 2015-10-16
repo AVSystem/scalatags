@@ -125,8 +125,13 @@ object JsDom
   }
 
   class GenericAttr[T] extends AttrValue[T]{
-    def apply(t: dom.Element, a: Attr, v: T): Unit = {
-      t.setAttribute(a.name, v.toString)
+    def apply(t: dom.Element, a: Attr, v: T, namespace: Option[Namespace]): Unit = {
+      namespace match {
+        case None =>
+          t.setAttribute(a.name, v.toString)
+        case Some(ns) =>
+          t.setAttributeNS(ns.uri, a.name, v.toString)
+      }
     }
   }
 
@@ -172,12 +177,12 @@ object JsDom
 
 trait LowPriorityImplicits{
   implicit object bindJsAny extends generic.AttrValue[dom.Element, js.Any]{
-    def apply(t: dom.Element, a: generic.Attr, v: js.Any): Unit = {
+    def apply(t: dom.Element, a: generic.Attr, v: js.Any, namespace: Option[Namespace]): Unit = {
       t.asInstanceOf[js.Dynamic].updateDynamic(a.name)(v)
     }
   }
   implicit def bindJsAnyLike[T <% js.Any] = new generic.AttrValue[dom.Element, T]{
-    def apply(t: dom.Element, a: generic.Attr, v: T): Unit = {
+    def apply(t: dom.Element, a: generic.Attr, v: T, namespace: Option[Namespace]): Unit = {
       t.asInstanceOf[js.Dynamic].updateDynamic(a.name)(v)
     }
   }

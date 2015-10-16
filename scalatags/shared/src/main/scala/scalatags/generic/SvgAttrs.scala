@@ -1487,6 +1487,14 @@ trait SvgAttrs[Builder, Output <: FragT, FragT] extends Util[Builder, Output, Fr
   val xmlns = "xmlns".attr
 
 
+  /**
+   *
+   *
+   * MDN
+   */
+  val xmlnsXlink = "xmlns:xlink".attr(Some(Namespace.svgXlinkNamespaceConfig))
+
+
   /*
    *
    *

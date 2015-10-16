@@ -90,7 +90,7 @@ trait TypedTag[Builder, +Output <: FragT, +FragT] extends Frag[Builder, FragT]{
 /**
  * Wraps up a HTML attribute in a value which isn't a string.
  */
-case class Attr(name: String) {
+case class Attr(name: String, namespace: Option[Namespace] = None) {
 
   if (!Escaping.validAttrName(name))
     throw new IllegalArgumentException(
@@ -101,7 +101,7 @@ case class Attr(name: String) {
    * Creates an [[AttrPair]] from an [[Attr]] and a value of type [[T]], if
    * there is an [[AttrValue]] of the correct type.
    */
-  def :=[Builder, T](v: T)(implicit ev: AttrValue[Builder, T]) = AttrPair(this, v, ev)
+  def :=[Builder, T](v: T, namespace: Option[Namespace] = None)(implicit ev: AttrValue[Builder, T]) = AttrPair(this, v, ev)
 }
 
 /**
@@ -132,9 +132,9 @@ trait StyleProcessor{
 /**
  * An [[Attr]], it's associated value, and an [[AttrValue]] of the correct type
  */
-case class AttrPair[Builder, T](a: Attr, v: T, ev: AttrValue[Builder, T]) extends Modifier[Builder] {
+case class AttrPair[Builder, T](a: Attr, v: T, ev: AttrValue[Builder, T], namespace: Option[Namespace] = None) extends Modifier[Builder] {
   override def applyTo(t: Builder): Unit = {
-    ev.apply(t, a, v)
+    ev.apply(t, a, v, namespace)
   }
   def :=[Builder, T](v: T)(implicit ev: AttrValue[Builder, T]) = AttrPair(a, v, ev)
 }
@@ -147,7 +147,7 @@ case class AttrPair[Builder, T](a: Attr, v: T, ev: AttrValue[Builder, T]) extend
   "No AttrValue defined for type ${T}; scalatags does not know how to use ${T} as an attribute"
 )
 trait AttrValue[Builder, T]{
-  def apply(t: Builder, a: Attr, v: T)
+  def apply(t: Builder, a: Attr, v: T, namespace: Option[Namespace])
 }
 
 /**
@@ -193,5 +193,8 @@ object Namespace{
   }
   val svgNamespaceConfig = new Namespace {
     def uri = "http://www.w3.org/2000/svg"
+  }
+  val svgXlinkNamespaceConfig = new Namespace {
+    def uri = "http://www.w3.org/1999/xlink"
   }
 }

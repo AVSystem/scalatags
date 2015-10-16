@@ -43,12 +43,13 @@ trait Util[Builder, Output <: FragT, FragT] extends LowPriUtil[Builder, Output, 
     /**
      * Converts the string to a [[Attr]]
      */
-    def attr = {
+    def attr: Attr = attr(None)
+    def attr(namespace: Option[Namespace]): Attr = {
       if (!Escaping.validAttrName(s))
         throw new IllegalArgumentException(
           s"Illegal attribute name: $s is not a valid XML attribute name"
         )
-      Attr(s)
+      Attr(s, namespace)
     }
     /**
      * Converts the string to a [[Style]]. The string is used as the cssName of the
