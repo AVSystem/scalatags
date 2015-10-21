@@ -134,7 +134,7 @@ trait StyleProcessor{
  */
 case class AttrPair[Builder, T](a: Attr, v: T, ev: AttrValue[Builder, T], namespace: Option[Namespace] = None) extends Modifier[Builder] {
   override def applyTo(t: Builder): Unit = {
-    ev.apply(t, a, v, namespace)
+    ev.apply(t, a, v)
   }
   def :=[Builder, T](v: T)(implicit ev: AttrValue[Builder, T]) = AttrPair(a, v, ev)
 }
@@ -147,7 +147,7 @@ case class AttrPair[Builder, T](a: Attr, v: T, ev: AttrValue[Builder, T], namesp
   "No AttrValue defined for type ${T}; scalatags does not know how to use ${T} as an attribute"
 )
 trait AttrValue[Builder, T]{
-  def apply(t: Builder, a: Attr, v: T, namespace: Option[Namespace])
+  def apply(t: Builder, a: Attr, v: T)
 }
 
 /**
