@@ -101,7 +101,7 @@ case class Attr(name: String, namespace: Option[Namespace] = None) {
    * Creates an [[AttrPair]] from an [[Attr]] and a value of type [[T]], if
    * there is an [[AttrValue]] of the correct type.
    */
-  def :=[Builder, T](v: T, namespace: Option[Namespace] = None)(implicit ev: AttrValue[Builder, T]) = AttrPair(this, v, ev)
+  def :=[Builder, T](v: T)(implicit ev: AttrValue[Builder, T]) = AttrPair(this, v, ev)
 }
 
 /**
@@ -132,7 +132,7 @@ trait StyleProcessor{
 /**
  * An [[Attr]], it's associated value, and an [[AttrValue]] of the correct type
  */
-case class AttrPair[Builder, T](a: Attr, v: T, ev: AttrValue[Builder, T], namespace: Option[Namespace] = None) extends Modifier[Builder] {
+case class AttrPair[Builder, T](a: Attr, v: T, ev: AttrValue[Builder, T]) extends Modifier[Builder] {
   override def applyTo(t: Builder): Unit = {
     ev.apply(t, a, v)
   }
