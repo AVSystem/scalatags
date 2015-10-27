@@ -1452,7 +1452,7 @@ trait SvgAttrs[Builder, Output <: FragT, FragT] extends Util[Builder, Output, Fr
    *
    * MDN
    */
-  val xLinkHref= "xlink:href".attr
+  val xLinkHref= "xlink:href".nsAttr(Namespace.svgXlinkNamespaceConfig)
 
 
   /*
@@ -1492,7 +1492,7 @@ trait SvgAttrs[Builder, Output <: FragT, FragT] extends Util[Builder, Output, Fr
    *
    * MDN
    */
-  val xmlnsXlink = "xmlns:xlink".nsAttr(Namespace.svgXlinkNamespaceConfig)
+  val xmlnsXlink = "xmlns:xlink".attr
 
 
   /*
