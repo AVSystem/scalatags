@@ -38,6 +38,7 @@ trait Tags extends generic.Tags[dom.Element, dom.Element, dom.Node]{
   val figure = "figure".tag[dom.html.Element]
   val figcaption = "figcaption".tag[dom.html.Element]
   val div = "div".tag[dom.html.Div]
+  val main = "main".tag[dom.html.Div]
   // Text-level semantics
   val a = "a".tag[dom.html.Anchor]
   val em = "em".tag[dom.html.Element]
