@@ -199,12 +199,6 @@ trait Tags[Builder, Output <: FragT, FragT] extends Util[Builder, Output, FragT]
     *  MDN
     */
    val div: TypedTag[Builder, Output, FragT]
-   /**
-    * Represents a generic container with no special meaning.
-    *
-    *  MDN
-    */
-   val main: TypedTag[Builder, Output, FragT]
 
    // Text-level semantics
    /**
