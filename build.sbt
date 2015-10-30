@@ -83,6 +83,7 @@ lazy val example = project.in(file("example"))
     scalaVersion := "2.11.4"
   )
 
+/*
 lazy val readme = scalatex.ScalatexReadme(
   folder = "readme",
   url = "https://github.com/lihaoyi/scalatags/tree/master",
@@ -90,3 +91,4 @@ lazy val readme = scalatex.ScalatexReadme(
   targetFolder = "target/site",
   autoResources = Seq("Autocomplete.png", "ErrorHighlighting.png", "InlineDocs.png")
 )
+*/

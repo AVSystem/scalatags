@@ -35,7 +35,6 @@ trait Tags extends generic.Tags[Builder, String, String]{
   val figure = "figure".tag[String]
   val figcaption = "figcaption".tag[String]
   val div = "div".tag[String]
-  val main = "main".tag[String]
   // Text-level semantics
   val a = "a".tag[String]
   val em = "em".tag[String]
