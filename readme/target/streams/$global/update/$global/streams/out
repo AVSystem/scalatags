@@ -1,4 +1,5 @@
 [0m[[0minfo[0m] [0mUpdating {file:/D:/work/avs_scalatags/}readme...[0m
+[0m[[0mdebug[0m] [0mno default cache defined: set to C:\Users\malchik\.ivy2\cache[0m
 [0m[[0mdebug[0m] [0m:: resolving dependencies :: readme#readme_2.11;0.1-SNAPSHOT[0m
 [0m[[0mdebug[0m] [0m	confs: [compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom, scala-tool][0m
 [0m[[0mdebug[0m] [0m	validate = true[0m
@@ -7,7 +8,7 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies for readme#readme_2.11;0.1-SNAPSHOT [compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies readme#readme_2.11;0.1-SNAPSHOT->org.scala-lang#scala-library;2.11.6 [compile->default(compile)][0m
 [0m[[0minfo[0m] [0mResolving org.scala-lang#scala-library;2.11.6 ...[0m
-[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@339af8ec[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@30c1a3c6[0m
 [0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang#scala-library;2.11.6[0m
 [0m[[0mdebug[0m] [0m	found org.scala-lang#scala-library;2.11.6 in sbt-chain[0m
 [0m[[0mdebug[0m] [0m	[2.11.6] org.scala-lang#scala-library;2.11.6[0m
@@ -16,7 +17,7 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies readme#readme_2.11;0.1-SNAPSHOT->org.scala-lang#scala-library;2.11.6 [compile->master][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies readme#readme_2.11;0.1-SNAPSHOT->com.lihaoyi#scalatex-api_2.11;0.2.1 [compile->default(compile)][0m
 [0m[[0minfo[0m] [0mResolving com.lihaoyi#scalatex-api_2.11;0.2.1 ...[0m
-[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@7fb84823[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@4237d41d[0m
 [0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: com.lihaoyi#scalatex-api_2.11;0.2.1[0m
 [0m[[0mdebug[0m] [0m	found com.lihaoyi#scalatex-api_2.11;0.2.1 in sbt-chain[0m
 [0m[[0mdebug[0m] [0m== resolving dependencies readme#readme_2.11;0.1-SNAPSHOT->com.lihaoyi#scalatex-api_2.11;0.2.1 [compile->runtime][0m
@@ -140,7 +141,7 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies readme#readme_2.11;0.1-SNAPSHOT->com.lihaoyi#scalatex-api_2.11;0.2.1 [compile->master][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies readme#readme_2.11;0.1-SNAPSHOT->com.scalatags#scalatags_2.11;0.4.2 [compile->default(compile)][0m
 [0m[[0minfo[0m] [0mResolving com.scalatags#scalatags_2.11;0.4.2 ...[0m
-[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@2c0066dd[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@27a64894[0m
 [0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: com.scalatags#scalatags_2.11;0.4.2[0m
 [0m[[0mdebug[0m] [0m	found com.scalatags#scalatags_2.11;0.4.2 in sbt-chain[0m
 [0m[[0mdebug[0m] [0m== resolving dependencies readme#readme_2.11;0.1-SNAPSHOT->com.scalatags#scalatags_2.11;0.4.2 [compile->runtime][0m
@@ -1346,7 +1347,7 @@
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang.modules#scala-xml_2.11;1.0.3!scala-xml_2.11.jar(bundle)[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang.modules#scala-parser-combinators_2.11;1.0.3!scala-parser-combinators_2.11.jar(bundle)[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] jline#jline;2.12.1!jline.jar[0m
-[0m[[0mdebug[0m] [0m:: resolution report :: resolve 747ms :: artifacts dl 18ms[0m
+[0m[[0mdebug[0m] [0m:: resolution report :: resolve 740ms :: artifacts dl 24ms[0m
 [0m[[0mdebug[0m] [0m	report for readme#readme_2.11;0.1-SNAPSHOT compile produced in D:\work\avs_scalatags\readme\target\resolution-cache\reports\readme-readme_2.11-compile.xml[0m
 [0m[[0mdebug[0m] [0m	report for readme#readme_2.11;0.1-SNAPSHOT runtime produced in D:\work\avs_scalatags\readme\target\resolution-cache\reports\readme-readme_2.11-runtime.xml[0m
 [0m[[0mdebug[0m] [0m	report for readme#readme_2.11;0.1-SNAPSHOT test produced in D:\work\avs_scalatags\readme\target\resolution-cache\reports\readme-readme_2.11-test.xml[0m
@@ -1360,5 +1361,5 @@
 [0m[[0mdebug[0m] [0m	report for readme#readme_2.11;0.1-SNAPSHOT docs produced in D:\work\avs_scalatags\readme\target\resolution-cache\reports\readme-readme_2.11-docs.xml[0m
 [0m[[0mdebug[0m] [0m	report for readme#readme_2.11;0.1-SNAPSHOT pom produced in D:\work\avs_scalatags\readme\target\resolution-cache\reports\readme-readme_2.11-pom.xml[0m
 [0m[[0mdebug[0m] [0m	report for readme#readme_2.11;0.1-SNAPSHOT scala-tool produced in D:\work\avs_scalatags\readme\target\resolution-cache\reports\readme-readme_2.11-scala-tool.xml[0m
-[0m[[0mdebug[0m] [0m	resolve done (747ms resolve - 18ms download)[0m
+[0m[[0mdebug[0m] [0m	resolve done (740ms resolve - 24ms download)[0m
 [0m[[0minfo[0m] [0mDone updating.[0m
