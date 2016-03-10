@@ -16,6 +16,7 @@ lazy val scalatags = crossProject
     libraryDependencies ++= Seq(
       "com.lihaoyi" %% "acyclic" % "0.1.2" % "provided",
       "com.lihaoyi" %%% "utest" % "0.3.1" % "test",
+      "com.lihaoyi" %%% "sourcecode" % "0.1.0",
       "org.scala-lang" % "scala-reflect" % scalaVersion.value % "provided"
     ) ++ (
       if (scalaVersion.value startsWith "2.11.") Nil
@@ -56,8 +57,9 @@ lazy val scalatags = crossProject
   )
   .jvmSettings()
   .jsSettings(
+    scalaJSUseRhino in Global := false,
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom" % "0.8.0"
+      "org.scala-js" %%% "scalajs-dom" % "0.8.2"
     ),
     resolvers += Resolver.sonatypeRepo("releases"),
     scalaJSStage in Test := FullOptStage,
