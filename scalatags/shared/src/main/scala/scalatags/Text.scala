@@ -1,8 +1,9 @@
 package scalatags
+import java.util.Objects
+
 import acyclic.file
+
 import scalatags.generic._
-import scala.collection.SortedMap
-import collection.mutable
 import scala.annotation.unchecked.uncheckedVariance
 import scalatags.stylesheet.{StyleSheetFrag, StyleTree}
 import scalatags.text.Builder
@@ -11,6 +12,7 @@ import scalatags.text.Builder
  * A Scalatags module that works with a text back-end, i.e. it creates HTML
  * `String`s.
  */
+
 
 object Text
   extends generic.Bundle[text.Builder, String, String]
@@ -24,7 +26,8 @@ object Text
   object svgTags extends Text.Cap with text.SvgTags
   object svgAttrs extends Text.Cap with SvgAttrs
 
-  object implicits extends Aggregate
+  object implicits extends Aggregate with DataConverters
+
   object all
     extends Cap
     with Attrs
@@ -43,9 +46,9 @@ object Text
     object * extends Cap with Attrs with Styles
   }
 
-  trait Cap extends Util{ self =>
+  trait Cap extends Util with text.TagFactory{ self =>
     type ConcreteHtmlTag[T <: String] = TypedTag[T]
-
+    type BaseTagType = TypedTag[String]
     protected[this] implicit def stringAttrX = new GenericAttr[String]
     protected[this] implicit def stringStyleX = new GenericStyle[String]
     protected[this] implicit def stringPixelStyleX = new GenericPixelStyle[String](stringStyleX)
@@ -54,20 +57,26 @@ object Text
       TypedTag(tag, Nil, void)
     }
     implicit class SeqFrag[A <% Frag](xs: Seq[A]) extends Frag{
+      Objects.requireNonNull(xs)
       def applyTo(t: text.Builder) = xs.foreach(_.applyTo(t))
       def render = xs.map(_.render).mkString
     }
   }
 
   trait Aggregate extends generic.Aggregate[text.Builder, String, String]{
-    implicit def ClsModifier(s: stylesheet.Cls): Modifier = new Modifier{
-      def applyTo(t: text.Builder) = t.appendAttr("class", " " + s.name)
+    implicit def ClsModifier(s: stylesheet.Cls): Modifier = new Modifier with text.Builder.ValueSource{
+      def applyTo(t: text.Builder) = t.appendAttr("class",this)
+
+      override def appendAttrValue(sb: StringBuilder): Unit = {
+        sb.append(' ')
+        Escaping.escape(s.name, sb)
+      }
     }
     implicit class StyleFrag(s: generic.StylePair[text.Builder, _]) extends StyleSheetFrag{
       def applyTo(c: StyleTree) = {
         val b = new Builder()
         s.applyTo(b)
-        val Array(style, value) = b.attrs(b.attrIndex("style"))._2.split(":", 2)
+        val Array(style, value) = b.attrsString(b.attrs(b.attrIndex("style"))._2).split(":", 2)
         c.copy(styles = c.styles.updated(style, value))
       }
     }
@@ -85,13 +94,14 @@ object Text
     type RawFrag = Text.RawFrag
     def raw(s: String) = RawFrag(s)
 
-    type Tag = Text.TypedTag[String]
+
     val Tag = Text.TypedTag
   }
 
 
 
   case class StringFrag(v: String) extends text.Frag{
+    Objects.requireNonNull(v)
     def render = {
       val strb = new StringBuilder()
       writeTo(strb)
@@ -102,26 +112,20 @@ object Text
   object StringFrag extends Companion[StringFrag]
   object RawFrag extends Companion[RawFrag]
   case class RawFrag(v: String) extends text.Frag {
+    Objects.requireNonNull(v)
     def render = v
     def writeTo(strb: StringBuilder) = strb ++= v
   }
 
-  class GenericAttr[T] extends AttrValue[T]{
+  class GenericAttr[T] extends AttrValue[T] {
     def apply(t: text.Builder, a: Attr, v: T): Unit = {
-      t.setAttr(a.name, v.toString)
+      t.setAttr(a.name, Builder.GenericAttrValueSource(v.toString))
     }
   }
 
-  class GenericStyle[T] extends StyleValue[T]{
+  class GenericStyle[T] extends StyleValue[T] {
     def apply(t: text.Builder, s: Style, v: T): Unit = {
-      val strb = new StringBuilder()
-
-      Escaping.escape(s.cssName, strb)
-      strb ++=  ": "
-      Escaping.escape(v.toString, strb)
-      strb ++= ";"
-
-      t.appendAttr("style", strb.toString)
+      t.appendAttr("style", Builder.StyleValueSource(s, v.toString))
     }
   }
   class GenericPixelStyle[T](ev: StyleValue[T]) extends PixelStyleValue[T]{
@@ -164,7 +168,7 @@ object Text
       while (i < builder.attrIndex){
         val pair = builder.attrs(i)
         strb += ' ' ++= pair._1 ++= "=\""
-        Escaping.escape(pair._2, strb)
+        builder.appendAttrStrings(pair._2,strb)
         strb += '\"'
         i += 1
       }

@@ -1,11 +1,16 @@
 package scalatags
-import acyclic.file
-import org.scalajs.dom
-import scala.scalajs.js
+import java.util.Objects
 
-import org.scalajs.dom.{html, svg, Element}
+import acyclic.file
+import org.scalajs
+import org.scalajs.dom
+
+import scala.language.implicitConversions
+import scala.scalajs.js
+import org.scalajs.dom.{Element, html, raw, svg}
+
 import scala.annotation.unchecked.uncheckedVariance
-import scalatags.generic.{StylePair, Namespace, Aliases}
+import scalatags.generic.{Aliases, Namespace, StylePair}
 import scalatags.stylesheet.{StyleSheetFrag, StyleTree}
 
 
@@ -27,7 +32,7 @@ object JsDom
   object svgTags extends JsDom.Cap with jsdom.SvgTags
   object svgAttrs extends JsDom.Cap with SvgAttrs
 
-  object implicits extends Aggregate
+  object implicits extends Aggregate with DataConverters
 
   object all
     extends Cap
@@ -72,7 +77,7 @@ object JsDom
     def genericPixelStyle[T](implicit ev: StyleValue[T]): PixelStyleValue[T] = new JsDom.GenericPixelStyle[T](ev)
     def genericPixelStylePx[T](implicit ev: StyleValue[String]): PixelStyleValue[T] = new JsDom.GenericPixelStylePx[T](ev)
 
-    implicit def stringFrag(v: String) = new JsDom.StringFrag(v)
+    implicit def stringFrag(v: String): StringFrag = new JsDom.StringFrag(v)
 
 
     val RawFrag = JsDom.RawFrag
@@ -85,24 +90,25 @@ object JsDom
     val HtmlTag = JsDom.TypedTag
     type SvgTag = JsDom.TypedTag[svg.Element]
     val SvgTag = JsDom.TypedTag
-    type Tag = JsDom.TypedTag[dom.Element]
+
     val Tag = JsDom.TypedTag
 
 
   }
 
-  trait Cap extends Util{ self =>
+  trait Cap extends Util with jsdom.TagFactory{ self =>
     type ConcreteHtmlTag[T <: dom.Element] = TypedTag[T]
 
     protected[this] implicit def stringAttrX = new GenericAttr[String]
     protected[this] implicit def stringStyleX = new GenericStyle[String]
     protected[this] implicit def stringPixelStyleX = new GenericPixelStyle[String](stringStyleX)
-    implicit def UnitFrag(u: Unit) = new JsDom.StringFrag("")
+    implicit def UnitFrag(u: Unit): JsDom.StringFrag = new JsDom.StringFrag("")
     def makeAbstractTypedTag[T <: dom.Element](tag: String, void: Boolean, namespaceConfig: Namespace): TypedTag[T] = {
       TypedTag(tag, Nil, void, namespaceConfig)
     }
 
-    implicit class SeqFrag[A <% Frag](xs: Seq[A]) extends Frag{
+    implicit class SeqFrag[A](xs: Seq[A])(implicit ev: A => Frag) extends Frag{
+      Objects.requireNonNull(xs)
       def applyTo(t: dom.Element): Unit = xs.foreach(_.applyTo(t))
       def render: dom.Node = {
         val frag = org.scalajs.dom.document.createDocumentFragment()
@@ -114,11 +120,13 @@ object JsDom
 
   object StringFrag extends Companion[StringFrag]
   case class StringFrag(v: String) extends jsdom.Frag{
+    Objects.requireNonNull(v)
     def render: dom.Text = dom.document.createTextNode(v)
   }
 
   object RawFrag extends Companion[RawFrag]
   case class RawFrag(v: String) extends Modifier{
+    Objects.requireNonNull(v)
     def applyTo(elem: dom.Element): Unit = {
       elem.insertAdjacentHTML("beforeend", v)
     }
@@ -128,7 +136,16 @@ object JsDom
     def apply(t: dom.Element, a: Attr, v: T): Unit = {
       a.namespace match {
         case None =>
-          t.setAttribute(a.name, v.toString)
+          if (!a.raw) t.setAttribute(a.name, v.toString)
+          else {
+
+            // Ugly workaround for https://www.w3.org/Bugs/Public/show_bug.cgi?id=27228
+            val tmpElm = dom.document.createElement("p")
+            tmpElm.innerHTML = s"""<p ${a.name}="${v.toString}"><p>"""
+            val newAttr = tmpElm.children(0).attributes(0).cloneNode(true)
+            t.setAttributeNode(newAttr.asInstanceOf[raw.Attr])
+
+          }
         case Some(namespace) =>
           t.setAttributeNS(namespace.uri, a.name, v.toString)
       }
@@ -181,7 +198,7 @@ trait LowPriorityImplicits{
       t.asInstanceOf[js.Dynamic].updateDynamic(a.name)(v)
     }
   }
-  implicit def bindJsAnyLike[T <% js.Any] = new generic.AttrValue[dom.Element, T]{
+  implicit def bindJsAnyLike[T](implicit ev: T => js.Any) = new generic.AttrValue[dom.Element, T]{
     def apply(t: dom.Element, a: generic.Attr, v: T): Unit = {
       t.asInstanceOf[js.Dynamic].updateDynamic(a.name)(v)
     }

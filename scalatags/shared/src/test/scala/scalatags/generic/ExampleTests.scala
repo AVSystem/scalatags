@@ -9,6 +9,7 @@ class ExampleTests[Builder, Output <: FragT, FragT](bundle: Bundle[Builder, Outp
 
   val tests = TestSuite{
     'manualImports-strCheck({
+      // bundle is scalatags.Text or scalatags.JsDom
       import bundle.short._
       div(
         p(*.color:="red", *.fontSize:=64.pt)("Big Red Text"),
@@ -17,10 +18,10 @@ class ExampleTests[Builder, Output <: FragT, FragT](bundle: Bundle[Builder, Outp
     }
     ,
     {
+      // bundle is scalatags.Text or scalatags.JsDom
       import bundle.{attrs => attr, styles => css, _}
       import bundle.tags._
       import bundle.implicits._
-      import scalatags.DataConverters._
       div(
         p(css.color:="red", css.fontSize:=64.pt)("Big Red Text"),
         img(attr.href:="www.imgur.com/picture.jpg")
@@ -35,6 +36,7 @@ class ExampleTests[Builder, Output <: FragT, FragT](bundle: Bundle[Builder, Outp
     """
     )
 
+    // bundle is scalatags.Text or scalatags.JsDom
     import bundle.all._
     'splashExample-strCheck(
       // import scalatags.Text.all._
@@ -262,13 +264,13 @@ class ExampleTests[Builder, Output <: FragT, FragT](bundle: Bundle[Builder, Outp
         body(
           h1("This is my title"),
           div(
-            p("onclick".attr:="... do some js")(
+            p(attr("onclick"):="... do some js")(
               "This is my first paragraph"
             ),
-            a("href".attr:="www.google.com")(
+            a(attr("href"):="www.google.com")(
               p("Goooogle")
             ),
-            p("hidden".emptyAttr)(
+            p(attr("hidden").empty)(
               "I am hidden"
             )
           )
@@ -553,6 +555,7 @@ class ExampleTests[Builder, Output <: FragT, FragT](bundle: Bundle[Builder, Outp
     """
     )
     'additionalImports-strCheck({
+      // bundle is scalatags.Text or scalatags.JsDom
       import bundle._
       import styles2.pageBreakBefore
       import tags2.address
@@ -580,16 +583,59 @@ class ExampleTests[Builder, Output <: FragT, FragT](bundle: Bundle[Builder, Outp
       """<div style="z-index: 10;"></div>"""
     )
     'customAttributesAndStyles-strCheck({
-      val dataAppKey = "data-app-key".attr
-      val customBackgroundStyle = "background-color".style
       div(
-        dataAppKey:="YOUR_APP_KEY",
-        customBackgroundStyle:="red"
+        attr("data-app-key") := "YOUR_APP_KEY",
+        css("background-color") := "red"
+      )
+    }
+    ,
+    {
+      val dataAppKey = attr("data-app-key")
+      val customBackgroundColorStyle = css("background-color")
+      div(
+        dataAppKey := "YOUR_APP_KEY",
+        customBackgroundColorStyle := "red"
       )
     }
     ,
     """
       <div data-app-key="YOUR_APP_KEY" style="background-color: red;"></div>
+    """
+    )
+
+    'customTagNames-strCheck({
+      html(
+        head(
+          script("some script")
+        ),
+        body(
+          h1("This is my title"),
+          p("Hello")
+        )
+      )
+
+    }
+    ,
+    tag("html")(
+      tag("head")(
+        tag("script")("some script")
+      ),
+      tag("body")(
+        tag("h1")("This is my title"),
+        tag("p")("Hello")
+      )
+    )
+    ,
+    """
+      <html>
+          <head>
+              <script>some script</script>
+          </head>
+          <body>
+              <h1>This is my title</h1>
+              <p>Hello</p>
+          </body>
+      </html>
     """
     )
     'aria- strCheck(
@@ -640,5 +686,72 @@ class ExampleTests[Builder, Output <: FragT, FragT](bundle: Bundle[Builder, Outp
       """
     )
 
+    'frag-strCheck(
+      {
+        div(
+          h1("Hello"),
+          p("World")
+        )
+      }
+      ,
+      {
+        val children = Seq[Frag](
+          h1("Hello"),
+          p("World")
+        )
+        div(
+          children
+        )
+      }
+      ,
+      {
+        val children: Frag = frag(
+          h1("Hello"),
+          p("World")
+        )
+        div(
+          children
+        )
+      }
+      ,
+      """
+        <div>
+            <h1>Hello</h1>
+            <p>World</p>
+        </div>
+    """
+    )
+    'modifier-strCheck(
+      {
+        div(
+          cls := "my-bootstrap-class",
+          color := "red"
+        )
+      }
+      ,
+      {
+        val mods = Seq[Modifier](
+          cls := "my-bootstrap-class",
+          color := "red"
+        )
+        div(
+          mods
+        )
+      }
+      ,
+      {
+        val mods: Modifier = modifier(
+          cls := "my-bootstrap-class",
+          color := "red"
+        )
+        div(
+          mods
+        )
+      }
+      ,
+      """
+        <div class="my-bootstrap-class" style="color: red;"></div>
+      """
+    )
   }
 }

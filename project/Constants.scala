@@ -1,4 +1,4 @@
 package scalatags
 object Constants{
-  val version = "0.5.4-avs.1-SNAPSHOT"
+  val version = "0.6.5"
 }

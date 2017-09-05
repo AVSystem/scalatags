@@ -1,7 +1,7 @@
 package scalatags
 package generic
 import acyclic.file
-import scalatags.stylesheet.{Sheet, StyleSheetFrag}
+import scalatags.stylesheet.StyleSheetFrag
 import scalatags.text
 
 /**
@@ -44,7 +44,7 @@ trait Bundle[Builder, Output <: FragT, FragT] extends Aliases[Builder, Output, F
    * [[Modifier]], typeclass instances for treating strings and numbers as attributes
    * or style values, and other things.
    */
-  val implicits: Aggregate[Builder, Output, FragT]
+  val implicits: Aggregate[Builder, Output, FragT] with DataConverters
 
   type AbstractShort = generic.AbstractShort[Builder, Output, FragT]
 
@@ -78,6 +78,8 @@ trait Bundle[Builder, Output <: FragT, FragT] extends Aliases[Builder, Output, F
    * SVG only attributes
    */
   val svgAttrs: SvgAttrs
+
+
 }
 
 trait Aliases[Builder, Output <: FragT, FragT]{
@@ -99,7 +101,7 @@ trait Aliases[Builder, Output <: FragT, FragT]{
   type StyleValue[V] = generic.StyleValue[Builder, V]
   type PixelStyleValue[V] = generic.PixelStyleValue[Builder, V]
 
-  type Tag <: generic.TypedTag[Builder, Output, FragT]
+  type Tag = generic.TypedTag[Builder, Output, FragT]
 
   /**
    * A [[Modifier]] which contains a String which will not be escaped.
@@ -149,12 +151,12 @@ trait Aggregate[Builder, Output <: FragT, FragT] extends Aliases[Builder, Output
   implicit val floatPixelStyle = genericPixelStylePx[Float]
   implicit val doublePixelStyle = genericPixelStylePx[Double]
 
-  implicit def byteFrag(v: Byte) = stringFrag(v.toString)
-  implicit def shortFrag(v: Short) = stringFrag(v.toString)
-  implicit def intFrag(v: Int) = stringFrag(v.toString)
-  implicit def longFrag(v: Long) = stringFrag(v.toString)
-  implicit def floatFrag(v: Float) = stringFrag(v.toString)
-  implicit def doubleFrag(v: Double) = stringFrag(v.toString)
+  implicit def byteFrag(v: Byte): Frag = stringFrag(v.toString)
+  implicit def shortFrag(v: Short): Frag = stringFrag(v.toString)
+  implicit def intFrag(v: Int): Frag = stringFrag(v.toString)
+  implicit def longFrag(v: Long): Frag = stringFrag(v.toString)
+  implicit def floatFrag(v: Float): Frag = stringFrag(v.toString)
+  implicit def doubleFrag(v: Double): Frag = stringFrag(v.toString)
   implicit def stringFrag(v: String): Frag
 
   /**

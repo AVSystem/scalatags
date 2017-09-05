@@ -1,9 +1,10 @@
 package scalatags
 package generic
 
+import java.util.Objects.requireNonNull
+
 import acyclic.file
-import scala.collection.SortedMap
-import scalatags.generic
+
 import scala.annotation.implicitNotFound
 
 
@@ -88,20 +89,32 @@ trait TypedTag[Builder, +Output <: FragT, +FragT] extends Frag[Builder, FragT]{
 }
 
 /**
- * Wraps up a HTML attribute in a value which isn't a string.
- */
-case class Attr(name: String, namespace: Option[Namespace] = None) {
+  * Wraps up a HTML attribute in a value which isn't a string.
+  *
+  * @param name the name of this particular attribute
+  * @param namespace an XML [[Namespace]] that this attribute lives in
+  * @param raw all [[Attr]]s are checked to fail fast if their names are
+  *            invalid XML attrs; flagging them as [[raw]] disables the checks
+  *            in the few cases you actually want invalid XML attrs
+  *            (e.g. AngularJS)
+  */
+case class Attr(name: String, namespace: Option[Namespace] = None, raw: Boolean = false) {
 
-  if (!Escaping.validAttrName(name))
+  if (!raw && !Escaping.validAttrName(name)) {
     throw new IllegalArgumentException(
       s"Illegal attribute name: $name is not a valid XML attribute name"
     )
-
+  }
   /**
    * Creates an [[AttrPair]] from an [[Attr]] and a value of type [[T]], if
    * there is an [[AttrValue]] of the correct type.
    */
-  def :=[Builder, T](v: T)(implicit ev: AttrValue[Builder, T]) = AttrPair(this, v, ev)
+  def :=[Builder, T](v: T)(implicit ev: AttrValue[Builder, T]) = {
+    requireNonNull(v)
+    AttrPair(this, v, ev)
+  }
+
+  def empty[Builder](implicit ev: AttrValue[Builder, String]) = this := name
 }
 
 /**
@@ -112,7 +125,10 @@ case class Style(jsName: String, cssName: String) {
    * Creates an [[StylePair]] from an [[Style]] and a value of type [[T]], if
    * there is an [[StyleValue]] of the correct type.
    */
-  def :=[Builder, T](v: T)(implicit ev: StyleValue[Builder, T]) = StylePair(this, v, ev)
+  def :=[Builder, T](v: T)(implicit ev: StyleValue[Builder, T]) = {
+    requireNonNull(v)
+    StylePair(this, v, ev)
+  }
 }
 /**
  * Wraps up a CSS style in a value.
@@ -123,7 +139,10 @@ case class PixelStyle(jsName: String, cssName: String) {
    * Creates an [[StylePair]] from an [[Style]] and a value of type [[T]], if
    * there is an [[StyleValue]] of the correct type.
    */
-  def :=[Builder, T](v: T)(implicit ev: PixelStyleValue[Builder, T]) = ev(realStyle, v)
+  def :=[Builder, T](v: T)(implicit ev: PixelStyleValue[Builder, T]) = {
+    requireNonNull(v)
+    ev(realStyle, v)
+  }
 
 }
 trait StyleProcessor{
@@ -136,7 +155,10 @@ case class AttrPair[Builder, T](a: Attr, v: T, ev: AttrValue[Builder, T]) extend
   override def applyTo(t: Builder): Unit = {
     ev.apply(t, a, v)
   }
-  def :=[Builder, T](v: T)(implicit ev: AttrValue[Builder, T]) = AttrPair(a, v, ev)
+  def :=[Builder, T](v: T)(implicit ev: AttrValue[Builder, T]) = {
+    requireNonNull(v)
+    AttrPair(a, v, ev)
+  }
 }
 /**
  * Used to specify how to handle a particular type [[T]] when it is used as

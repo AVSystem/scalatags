@@ -8,6 +8,8 @@ import language.experimental.macros
  * and documentation.
  */
 package object scalatags {
+
+
   private[scalatags] def camelCase(dashedString: String) = {
     val first :: rest = dashedString.split("-").toList
 

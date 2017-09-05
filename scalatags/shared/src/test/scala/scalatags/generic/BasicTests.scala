@@ -2,7 +2,6 @@ package scalatags
 package generic
 
 import acyclic.file
-import utest.framework.TestSuite
 import utest._
 
 import TestUtil._
@@ -22,7 +21,7 @@ class BasicTests[Builder, Output <: FragT, FragT](omg: Bundle[Builder, Output, F
         html(
           head(
             x,
-            "string-tag".tag
+            tag("string-tag")
           ),
           body(
             div(
@@ -137,6 +136,26 @@ class BasicTests[Builder, Output <: FragT, FragT](omg: Bundle[Builder, Output, F
         val msg = compileError("""a(opacity:= {() => "lol"})""").msg
         assert(msg.contains("scalatags does not know how to use () => String as an style"))
       }
+    }
+    'nulls{
+      val nullString: String = null
+      * - intercept[NullPointerException](div(nullString))
+      * - intercept[NullPointerException](div(null: Seq[Int]))
+      * - intercept[NullPointerException](div(height := nullString))
+      * - intercept[NullPointerException](div(opacity := nullString))
+    }
+    'rawAttrs-{
+      strCheck(
+        button(
+          attr("[class.active]", raw = true):= "isActive",
+          attr("(click)", raw = true) := "myEvent()"
+        ),
+        """<button [class.active]="isActive" (click)="myEvent()"></button>"""
+
+      )
+    }
+    'specialChars- {
+      * - intercept[java.lang.IllegalArgumentException](div(attr("[(ngModel)]") := "myModel"))
     }
 
   }
